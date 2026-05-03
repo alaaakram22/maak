@@ -1,0 +1,142 @@
+@extends('admin.layouts.layout')
+
+@section('body')
+
+<div class="container">
+
+```
+<div class="card o-hidden border-0 shadow-lg my-5">
+    <div class="card-body p-0">
+
+        <div class="row">
+
+            <!-- LEFT IMAGE (optional like register page) -->
+            <div class="col-lg-5 d-none d-lg-block bg-register-image"></div>
+
+            <!-- FORM SIDE -->
+            <div class="col-lg-7">
+                <div class="p-5">
+
+                    <div class="text-center mb-4">
+                        <h1 class="h4 text-gray-900">Create Caregiver</h1>
+                        <p class="text-muted small">Fill all required information below</p>
+                    </div>
+
+                    <!-- Errors -->
+                    @if ($errors->any())
+                        <div class="alert alert-danger">
+                            <ul class="mb-0 pl-3">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+
+                    <form action="{{ route('caregivers.store') }}" method="POST" enctype="multipart/form-data">
+                        @csrf
+
+                        <!-- USER INFO -->
+                        <div class="form-group row">
+
+                            <div class="col-sm-6 mb-3 mb-sm-0">
+                                <input type="text" name="name"
+                                       class="form-control form-control-user"
+                                       placeholder="Full Name" required>
+                            </div>
+
+                            <div class="col-sm-6">
+                                <input type="email" name="email"
+                                       class="form-control form-control-user"
+                                       placeholder="Email Address" required>
+                            </div>
+
+                        </div>
+
+                        <div class="form-group row">
+
+                            <div class="col-sm-6 mb-3 mb-sm-0">
+                                <input type="password" name="password"
+                                       class="form-control form-control-user"
+                                       placeholder="Password" required>
+                            </div>
+
+                            <div class="col-sm-6">
+                                <input type="text" name="phone"
+                                       class="form-control form-control-user"
+                                       placeholder="Phone Number" required>
+                            </div>
+
+                        </div>
+
+                        <div class="form-group row">
+
+                            <div class="col-sm-6 mb-3 mb-sm-0">
+                                <select name="gender" class="form-control">
+                                    <option value="">Select Gender</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                </select>
+                            </div>
+
+                            <div class="col-sm-6">
+                                <input type="date" name="date_of_birth"
+                                       class="form-control form-control-user">
+                            </div>
+
+                        </div>
+
+                        <hr>
+
+                        <!-- CAREGIVER INFO -->
+                        <div class="form-group">
+
+                            <input type="number" name="experience"
+                                   class="form-control form-control-user mb-3"
+                                   placeholder="Experience (Years)" required>
+
+                            <input type="text" name="skills"
+                                   class="form-control form-control-user mb-3"
+                                   placeholder="Skills (e.g. elderly care, first aid)" required>
+
+                            <input type="number" step="0.01" name="hourly_rate"
+                                   class="form-control form-control-user mb-3"
+                                   placeholder="Hourly Rate">
+
+                            <select name="medical_background" class="form-control mb-3">
+                                <option value="0">No Medical Background</option>
+                                <option value="1">Medical Background</option>
+                            </select>
+
+                            <input type="file" name="image"
+                                   class="form-control">
+
+                        </div>
+
+                        <!-- SUBMIT -->
+                        <button type="submit" class="btn btn-primary btn-user btn-block">
+                            Create Caregiver
+                        </button>
+
+                    </form>
+
+                    <hr>
+
+                    <div class="text-center">
+                        <a href="{{ route('allCaregivers') }}" class="small">
+                            Back to Caregivers List
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+```
+
+</div>
+
+@endsection
