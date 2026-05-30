@@ -33,4 +33,9 @@ class caregivers extends Model
 
     return asset('images/default-caregiver.png');
 }
+
+    public function bookings()
+{
+    return $this->hasMany(Booking::class);
+}
 }

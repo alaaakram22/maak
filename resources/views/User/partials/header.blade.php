@@ -53,40 +53,79 @@
                 </a>
 
                 <nav id="navmenu" class="navmenu">
-                    <ul  class="flex items-center gap-1">
+                    <ul class="flex items-center gap-1">
 
                         <li><a href="{{ url('/') }}">Home</a></li>
                         <li><a href="{{ url('about') }}">About</a></li>
-                        <li><a href="{{ url('services') }}">Services</a></li>
-                        <li><a href="{{ url('contact') }}">Contact</a></li>
-
                         @auth
+
+                        {{-- CUSTOMER NAV --}}
+                        @if(Auth::user()->role === 'customer')
+
                         <li>
-                            <a href="{{ route('profile') }}">Profile</a>
+                            <a href="{{ url('services') }}">Services</a>
                         </li>
 
                         <li>
-                            <form method="POST" action="{{ route('logout') }}">
-                                @csrf
-                                <button type="submit"
-                                    class="font-semibold text-red-600 hover:text-red-900">
-                                    Log out
-                                </button>
-                            </form>
+                            <a href="{{ route('my.bookings') }}">My Bookings</a>
+                        </li>
+
+                        {{-- CAREGIVER NAV --}}
+                        @elseif(Auth::user()->role === 'caregiver')
+
+                        <li>
+                            <a href="{{ route('caregiver.bookings') }}">
+                                My Bookings
+                            </a>
+                        </li>
+
+                        @endif
+
+                        @endauth
+
+                        {{-- GUEST --}}
+                        @guest
+                        <li>
+                            <a href="{{ url('services') }}">Services</a>
+                        </li>
+                        @endguest
+                        <li><a href="{{ url('contact') }}">Contact</a></li>
+
+                        @auth
+                        <li class="dropdown">
+                            <a href="#">
+                                <span>{{ Auth::user()->name }}</span>
+                                <i class="bi bi-chevron-down toggle-dropdown"></i>
+                            </a>
+
+                            <ul>
+                                <li>
+                                    <a href="{{ route('profile') }}">Profile</a>
+                                </li>
+
+                                <li>
+                                    <form method="POST" action="{{ route('logout') }}">
+                                        @csrf
+
+                                        <button type="submit"
+                                            style="border: none; background: none; padding: 10px 20px; width: 100%; text-align: left;color:red;">
+                                            Logout
+                                        </button>
+                                    </form>
+                                </li>
+                            </ul>
                         </li>
                         @endauth
 
                         @guest
                         <li>
-                            <a href="{{ route('login') }}"
-                                class="font-semibold text-gray-600 hover:text-gray-900">
+                            <a href="{{ route('login') }}" class="font-semibold text-gray-600 hover:text-gray-900">
                                 Log in
                             </a>
                         </li>
 
                         <li>
-                            <a href="{{ route('register') }}"
-                                class="font-semibold text-gray-600 hover:text-gray-900">
+                            <a href="{{ route('register') }}" class="font-semibold text-gray-600 hover:text-gray-900">
                                 Register
                             </a>
                         </li>

@@ -78,7 +78,13 @@
                                 back to you
                                 shortly.</p>
 
-                            <form action="forms/contact.php" method="post" class="php-email-form">
+                            @if(session('success'))
+                            <div class="alert alert-success rounded-3 mb-3">
+                                {{ session('success') }}
+                            </div>
+                            @endif
+                            <form action="{{ route('contact.store') }}" method="POST">
+                                @csrf
                                 <div class="row g-4">
                                     <div class="col-md-6">
                                         <input type="text" class="form-control" name="name" id="name"
@@ -100,11 +106,7 @@
                                             placeholder="Your Message" rows="6" required=""></textarea>
                                     </div>
 
-                                    <div class="col-12">
-                                        <div class="loading">Loading</div>
-                                        <div class="error-message"></div>
-                                        <div class="sent-message">Your message has been sent. Thank you!</div>
-                                    </div>
+                                    
 
                                     <div class="col-12">
                                         <button type="submit" class="btn btn-submit">Send Message</button>

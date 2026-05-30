@@ -76,25 +76,38 @@ class BookingController extends Controller
     }
 
     public function pay(Request $request, Booking $booking)
-    {
-        $user = auth()->user();
-        if (! $user || $user->id !== $booking->customer_id) {
-            abort(403);
-        }
+{
+    $user = auth()->user();
 
-        if ($booking->payment_status === 'paid') {
-            return redirect()->route('booking.payment', $booking)
-                ->with('info', 'This booking has already been paid and confirmed.');
-        }
-
-        $booking->update([
-            'payment_status' => 'paid',
-            'status' => 'confirmed',
-        ]);
-
-        return redirect()->route('booking.payment', $booking)
-            ->with('success', 'Payment completed successfully. Your booking is confirmed.');
+    if (! $user || $user->id !== $booking->customer_id) {
+        abort(403);
     }
+
+    // prevent double payment
+    if ($booking->payment_status === 'paid') {
+        return redirect()->route('booking.payment', $booking)
+            ->with('info', 'This booking is already paid.');
+    }
+
+    // OPTIONAL: validate fake card input (UX only, not real payment)
+    $request->validate([
+        'card_name' => 'required|string|max:255',
+        'card_number' => 'required|digits:16',
+        'expiry_month' => 'required|digits:2',
+        'expiry_year' => 'required|digits:2',
+        'cvv' => 'required|digits:3',
+    ]);
+
+    // mark as paid + confirmed
+    $booking->update([
+        'payment_status' => 'paid',
+        'status' => 'confirmed',
+    ]);
+
+    return redirect()
+        ->route('booking.payment', $booking)
+        ->with('success', 'Payment successful! Your booking is confirmed.');
+}
 
     private function bookingEndDate(Carbon $startDate, string $option): Carbon
     {
@@ -109,4 +122,14 @@ class BookingController extends Controller
     {
         return $startA->lte($endB) && $startB->lte($endA);
     }
+
+    public function allBookings()
+{
+    $bookings = Booking::with([
+        'customer.customer',
+        'caregiver.user'
+    ])->latest()->get();
+
+    return view('admin.allbookings', compact('bookings'));
+}
 }

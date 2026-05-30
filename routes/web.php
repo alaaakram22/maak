@@ -5,7 +5,10 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CaregiversController;
 use App\Http\Controllers\CustomersController;
 use App\Http\Controllers\BookingController;
+use App\Http\Controllers\UserBookingController;
+use App\Http\Controllers\CaregiverBookingController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\MessageController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -52,6 +55,9 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
     Route::put('/admin-profile', [ProfileController::class, 'updateAdminProfile'])
         ->name('admin.profile.update');
+
+    Route::get('/allbookings', [BookingController::class, 'allBookings'])
+    ->name('allbookings');
 });
 
 Route::middleware(['auth'])->group(function () {
@@ -65,6 +71,16 @@ Route::middleware(['auth'])->group(function () {
 
     Route::put('/profile/password-update', [ProfileController::class, 'updatePassword'])
         ->name('profile.password.update');
+
+    Route::get('/my-bookings', [UserBookingController::class, 'index'])
+    ->name('my.bookings');
+
+     Route::get('/caregiver/bookings', [CaregiverBookingController::class, 'index']
+    )->name('caregiver.bookings');
+
+    Route::post('/caregiver/bookings/{booking}/update-status',
+    [CustomersController::class, 'updateStatus']
+)->name('caregiver.booking.updateStatus');
 });
     
 Route::get('about', function () {
@@ -120,3 +136,5 @@ Route::controller(CustomersController::class)->group(function () {
         ->middleware('auth')
         ->name('customers.destroy');
 });
+
+Route::post('/contact', [MessageController::class, 'store'])->name('contact.store');

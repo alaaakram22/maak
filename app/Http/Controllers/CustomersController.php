@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\customers;
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Models\Booking;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
@@ -151,4 +152,20 @@ class CustomersController extends Controller
 
         return redirect()->back()->with('success', 'Customer deleted successfully!');
     }
+    public function updateStatus(Request $request, Booking $booking)
+{
+    $request->validate([
+        'health_status' => 'required|in:normal,moderate,critical',
+        'health_notes' => 'nullable|string|max:2000',
+    ]);
+
+    $customerProfile = $booking->customer->customer;
+
+    $customerProfile->update([
+        'health_status' => $request->health_status,
+        'health_notes' => $request->health_notes,
+    ]);
+
+    return back()->with('success', 'Customer health updated successfully.');
+}
 }
