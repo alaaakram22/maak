@@ -4,6 +4,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CaregiversController;
 use App\Http\Controllers\CustomersController;
+use App\Http\Controllers\BookingController;
 use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 
@@ -38,6 +39,9 @@ Route::middleware([
 Route::middleware(['auth'])->group(function () {
     Route::get('redirect', [HomeController::class, 'redirect']);
 
+    Route::post('/booking/store', [BookingController::class, 'store'])->name('booking.store');
+    Route::get('/booking/{booking}/payment', [BookingController::class, 'payment'])->name('booking.payment');
+    Route::post('/booking/{booking}/pay', [BookingController::class, 'pay'])->name('booking.pay');
 });
 
 Route::middleware(['auth', 'admin'])->group(function () {
@@ -96,9 +100,6 @@ Route::controller(CaregiversController::class)->group(function () {
 
     Route::get('/caregiver/{id}', 'show')
         ->name('caregiver.show');
-
-    Route::post('/booking/store', 'store')
-        ->name('booking.store');
 });
 // web.php
 
