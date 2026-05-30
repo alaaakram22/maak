@@ -13,6 +13,8 @@ class customers extends Model
         'user_id',
         'medical_history',
         'address',
+        'health_status',
+        'health_notes',
     ];
     protected $guarded = [];
 

@@ -13,6 +13,9 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Laravel\Fortify\Actions\RedirectIfTwoFactorAuthenticatable;
 use Laravel\Fortify\Fortify;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 
 class FortifyServiceProvider extends ServiceProvider
 {
@@ -34,6 +37,30 @@ class FortifyServiceProvider extends ServiceProvider
         Fortify::updateUserPasswordsUsing(UpdateUserPassword::class);
         Fortify::resetUserPasswordsUsing(ResetUserPassword::class);
         Fortify::redirectUserForTwoFactorAuthenticationUsing(RedirectIfTwoFactorAuthenticatable::class);
+
+        Fortify::authenticateUsing(function (Request $request) {
+
+            $user = User::where('email', $request->email)->first();
+
+            // Email not found
+            if (!$user) {
+
+                throw ValidationException::withMessages([
+                    'email' => 'User not found.',
+                ]);
+            }
+
+            // Wrong password
+            if (!Hash::check($request->password, $user->password)) {
+
+                throw ValidationException::withMessages([
+                    'password' => 'Incorrect password.',
+                ]);
+            }
+
+            return $user;
+        });
+
 
         RateLimiter::for('login', function (Request $request) {
             $throttleKey = Str::transliterate(Str::lower($request->input(Fortify::username())).'|'.$request->ip());

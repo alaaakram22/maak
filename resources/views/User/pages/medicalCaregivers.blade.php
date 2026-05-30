@@ -53,10 +53,10 @@
                                         <span>{{ $caregiver->experience ?? 0 }} Years Experience</span>
                                     </div>
 
-                                    <div class="department">
+                                    <!-- <div class="department">
                                         <i class="bi bi-star"></i>
                                         <span>Rating: {{ $caregiver->rating ?? 'N/A' }}</span>
-                                    </div>
+                                    </div> -->
                                 </div>
 
                                 <a href="{{ route('caregiver.show', $caregiver->id) }}" class="btn-appointment">

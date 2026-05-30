@@ -4,7 +4,11 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CaregiversController;
 use App\Http\Controllers\CustomersController;
+use App\Http\Controllers\BookingController;
+use App\Http\Controllers\UserBookingController;
+use App\Http\Controllers\CaregiverBookingController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\MessageController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -37,6 +41,10 @@ Route::middleware([
 
 Route::middleware(['auth'])->group(function () {
     Route::get('redirect', [HomeController::class, 'redirect']);
+
+    Route::post('/booking/store', [BookingController::class, 'store'])->name('booking.store');
+    Route::get('/booking/{booking}/payment', [BookingController::class, 'payment'])->name('booking.payment');
+    Route::post('/booking/{booking}/pay', [BookingController::class, 'pay'])->name('booking.pay');
 });
 
 Route::middleware(['auth', 'admin'])->group(function () {
@@ -47,6 +55,9 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
     Route::put('/admin-profile', [ProfileController::class, 'updateAdminProfile'])
         ->name('admin.profile.update');
+
+    Route::get('/allbookings', [BookingController::class, 'allBookings'])
+    ->name('allbookings');
 });
 
 Route::middleware(['auth'])->group(function () {
@@ -60,12 +71,21 @@ Route::middleware(['auth'])->group(function () {
 
     Route::put('/profile/password-update', [ProfileController::class, 'updatePassword'])
         ->name('profile.password.update');
-});
 
+    Route::get('/my-bookings', [UserBookingController::class, 'index'])
+    ->name('my.bookings');
+
+     Route::get('/caregiver/bookings', [CaregiverBookingController::class, 'index']
+    )->name('caregiver.bookings');
+
+    Route::post('/caregiver/bookings/{booking}/update-status',
+    [CustomersController::class, 'updateStatus']
+)->name('caregiver.booking.updateStatus');
+});
+    
 Route::get('about', function () {
     return view('user.pages.about');
 });
-
 Route::get('contact', function () {
     return view('user.pages.conatct');
 });
@@ -73,15 +93,6 @@ Route::get('contact', function () {
 Route::get('services', function () {
     return view('user.pages.services');
 });
-
-/*
-|--------------------------------------------------------------------------
-| Hospitals Page
-|--------------------------------------------------------------------------
-*/
-Route::get('hospitals', function () {
-    return view('user.pages.hospitals');
-})->name('hospitals');
 
 Route::controller(CaregiversController::class)->group(function () {
     Route::get('caregivers', 'allCaregivers')->name('allCaregivers');
@@ -105,12 +116,11 @@ Route::controller(CaregiversController::class)->group(function () {
 
     Route::get('/caregiver/{id}', 'show')
         ->name('caregiver.show');
-
-    Route::post('/booking/store', 'store')
-        ->name('booking.store');
 });
-
 // web.php
+
+
+
 
 Route::controller(CustomersController::class)->group(function () {
 
@@ -126,3 +136,5 @@ Route::controller(CustomersController::class)->group(function () {
         ->middleware('auth')
         ->name('customers.destroy');
 });
+
+Route::post('/contact', [MessageController::class, 'store'])->name('contact.store');

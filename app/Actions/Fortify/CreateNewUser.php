@@ -43,7 +43,11 @@ class CreateNewUser implements CreatesNewUsers
             // customer
             'medical_history' => ['required_if:role,customer', 'nullable', 'string'],
             'address' => ['required_if:role,customer', 'nullable', 'string'],
-        ])->validate();
+        ],[
+    // EMAIL
+    'email.required' => 'Email is required.',
+    'email.email' => 'Please enter a valid email address.',
+    'email.unique' => 'This email is already registered.'])->validate();
 
         // HANDLE IMAGE
         $imagePath = null;

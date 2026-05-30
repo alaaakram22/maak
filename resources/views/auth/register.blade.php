@@ -50,6 +50,16 @@
 
                 <input type="hidden" name="role" :value="role">
 
+                <template x-if="role === 'caregiver'">
+                    <!-- <div class="mt-4 border-t pt-4"> -->
+
+                        <div class="mb-4 p-4 bg-yellow-50 border-l-4 border-yellow-400 text-yellow-800 rounded">
+                            <p class="font-semibold">Caregiver registration requires admin approval.</p>
+                            <p class="text-sm">You will not be able to recive bookings until the admin approve your profile.</p>
+                        </div>
+                </div>
+                </template>
+
                 <!-- NAME -->
                 <div class="mb-4">
                     <x-label value="Full Name" />
