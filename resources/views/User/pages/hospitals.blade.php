@@ -1,5 +1,8 @@
 @include('user.partials.header')
 
+
+
+
 <main class="main">
 
     <a href="tel:123" class="emergency-call-box">

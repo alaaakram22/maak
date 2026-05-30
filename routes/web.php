@@ -86,6 +86,9 @@ Route::middleware(['auth'])->group(function () {
 Route::get('about', function () {
     return view('user.pages.about');
 });
+Route::get('hospitals', function () {
+    return view('user.pages.hospitals');
+});
 Route::get('contact', function () {
     return view('user.pages.conatct');
 });
