@@ -87,6 +87,10 @@
                                                         {{ $booking->caregiver->user->name }}
                                                     </h5>
 
+                                                    <p class="mb-1 text-muted small">
+                                                        {{ $booking->caregiver->skills ?? 'No skills listed' }}
+                                                    </p>
+
                                                     <span class="badge bg-primary">
                                                         Upcoming
                                                     </span>
@@ -194,6 +198,10 @@
                                                         {{ $booking->caregiver->user->name }}
                                                     </h5>
 
+                                                    <p class="mb-1 text-muted small">
+                                                        {{ $booking->caregiver->skills ?? 'No skills listed' }}
+                                                    </p>
+
                                                     <span class="badge bg-secondary">
                                                         Completed
                                                     </span>
@@ -218,6 +226,82 @@
                                                 {{ ucfirst($booking->booking_option) }}
                                             </div>
 
+                                            <!-- Caregiver Average Rating -->
+                                            @php
+                                                $avgRating = App\Models\Review::where('caregiver_id', $booking->caregiver_id)->avg('rating');
+                                                $totalReviews = App\Models\Review::where('caregiver_id', $booking->caregiver_id)->count();
+                                            @endphp
+                                            
+                                            @if($avgRating)
+                                                <div class="mb-3">
+                                                    <small class="text-muted">Caregiver Rating: </small>
+                                                    <div class="d-flex align-items-center gap-2">
+                                                        @php
+                                                            $fullStars = floor($avgRating);
+                                                            $halfStar = ($avgRating - $fullStars) >= 0.5 ? 1 : 0;
+                                                            $emptyStars = 5 - $fullStars - $halfStar;
+                                                        @endphp
+                                                        <div>
+                                                            @for($i = 0; $i < $fullStars; $i++)
+                                                                <span class="text-warning">★</span>
+                                                            @endfor
+                                                            @if($halfStar)
+                                                                <span class="text-warning">⭐</span>
+                                                            @endif
+                                                            @for($i = 0; $i < $emptyStars; $i++)
+                                                                <span class="text-muted">☆</span>
+                                                            @endfor
+                                                        </div>
+                                                        <small class="text-muted">({{ round($avgRating, 1) }} - {{ $totalReviews }} reviews)</small>
+                                                    </div>
+                                                </div>
+                                            @endif
+
+                                            <!-- Check if review exists -->
+                                            @php
+                                                $review = App\Models\Review::where('booking_id', $booking->id)->first();
+                                            @endphp
+
+                                            <!-- Show Review if exists -->
+                                            @if($review)
+                                                <div class="mb-3 p-3 bg-white rounded-3 border-start border-warning border-3">
+                                                    <div class="mb-2">
+                                                        <strong>Your Rating:</strong>
+                                                        <div>
+                                                            @for($i = 0; $i < $review->rating; $i++)
+                                                                <span class="text-warning">★</span>
+                                                            @endfor
+                                                            @for($i = $review->rating; $i < 5; $i++)
+                                                                <span class="text-muted">☆</span>
+                                                            @endfor
+                                                        </div>
+                                                    </div>
+                                                    @if($review->review)
+                                                        <div>
+                                                            <strong>Your Review:</strong>
+                                                            <p class="mb-0 text-muted" style="font-size: 0.9rem;">{{ $review->review }}</p>
+                                                        </div>
+                                                    @else
+                                                        <button type="button" class="btn btn-sm btn-outline-primary" 
+                                                                data-bs-toggle="modal" data-bs-target="#addReviewTextModal{{ $booking->id }}">
+                                                            <i class="bi bi-pencil me-2"></i> Add Review
+                                                        </button>
+                                                    @endif
+                                                    @if($review->review)
+                                                        <button type="button" class="btn btn-sm btn-outline-primary" 
+                                                                data-bs-toggle="modal" data-bs-target="#addReviewTextModal{{ $booking->id }}">
+                                                            <i class="bi bi-pencil me-2"></i> Edit Review
+                                                        </button>
+                                                    @endif
+                                                </div>
+                                            @else
+                                                <!-- Add Review Button -->
+                                                <button type="button" class="btn btn-sm btn-primary w-100" 
+                                                        data-bs-toggle="modal" data-bs-target="#reviewModal{{ $booking->id }}">
+                                                    <i class="bi bi-star me-2"></i> Rate & Review
+                                                </button>
+                                            @endif
+
                                             <span class="badge bg-dark">
                                                 Finished
                                             </span>
@@ -227,6 +311,80 @@
                                     </div>
 
                                 </div>
+
+                                <!-- Review Modal -->
+                                @if(!$review)
+                                    <div class="modal fade" id="reviewModal{{ $booking->id }}" tabindex="-1" aria-labelledby="reviewModalLabel{{ $booking->id }}" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="reviewModalLabel{{ $booking->id }}">
+                                                        Rate & Review {{ $booking->caregiver->user->name }}
+                                                    </h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <form action="{{ route('reviews.store') }}" method="POST">
+                                                    @csrf
+                                                    <input type="hidden" name="booking_id" value="{{ $booking->id }}">
+                                                    <div class="modal-body">
+                                                        <!-- Star Rating -->
+                                                        <div class="mb-3">
+                                                            <label class="form-label fw-bold">Rating *</label>
+                                                            <div class="rating-input d-flex gap-2" style="font-size: 2rem;">
+                                                                @for($i = 1; $i <= 5; $i++)
+                                                                    <input type="radio" name="rating" value="{{ $i }}" id="star{{ $i }}_{{ $booking->id }}" class="d-none">
+                                                                    <label for="star{{ $i }}_{{ $booking->id }}" class="cursor-pointer" style="cursor: pointer;">
+                                                                        <span class="star-icon text-muted" data-value="{{ $i }}">★</span>
+                                                                    </label>
+                                                                @endfor
+                                                            </div>
+                                                        </div>
+                                                        <!-- Review Text -->
+                                                        <div class="mb-3">
+                                                            <label for="review{{ $booking->id }}" class="form-label fw-bold">Review (Optional)</label>
+                                                            <textarea class="form-control" id="review{{ $booking->id }}" name="review" rows="4" placeholder="Share your experience with this caregiver..."></textarea>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                        <button type="submit" class="btn btn-primary">Submit Review</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
+
+                                <!-- Add/Edit Review Text Modal -->
+                                @if($review)
+                                    <div class="modal fade" id="addReviewTextModal{{ $booking->id }}" tabindex="-1" aria-labelledby="addReviewTextModalLabel{{ $booking->id }}" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="addReviewTextModalLabel{{ $booking->id }}">
+                                                        {{ $review->review ? 'Edit' : 'Add' }} Your Review
+                                                    </h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <form action="{{ route('reviews.update', $review->id) }}" method="POST">
+                                                    @csrf
+                                                    @method('PUT')
+                                                    <div class="modal-body">
+                                                        <!-- Review Text -->
+                                                        <div class="mb-3">
+                                                            <label for="reviewText{{ $booking->id }}" class="form-label fw-bold">Review</label>
+                                                            <textarea class="form-control" id="reviewText{{ $booking->id }}" name="review" rows="4" placeholder="Share your experience with this caregiver...">{{ $review->review }}</textarea>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                        <button type="submit" class="btn btn-primary">Save Review</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
 
                             @endforeach
 
@@ -260,6 +418,64 @@
     </div>
 
 </main>
+
+<script>
+    // Interactive star rating
+    document.querySelectorAll('.rating-input').forEach(ratingDiv => {
+        const labels = ratingDiv.querySelectorAll('label');
+        const radios = ratingDiv.querySelectorAll('input[type="radio"]');
+        
+        labels.forEach(label => {
+            label.addEventListener('mouseover', function() {
+                const value = this.querySelector('.star-icon').getAttribute('data-value');
+                updateStarsYellow(ratingDiv, value);
+            });
+        });
+        
+        ratingDiv.addEventListener('mouseleave', function() {
+            const checked = ratingDiv.querySelector('input[type="radio"]:checked');
+            if (checked) {
+                updateStarsYellow(ratingDiv, checked.value);
+            } else {
+                resetStars(ratingDiv);
+            }
+        });
+        
+        radios.forEach(radio => {
+            radio.addEventListener('change', function() {
+                updateStarsYellow(ratingDiv, this.value);
+            });
+        });
+        
+        // Set initial state if value is checked
+        const checked = ratingDiv.querySelector('input[type="radio"]:checked');
+        if (checked) {
+            updateStarsYellow(ratingDiv, checked.value);
+        }
+    });
+    
+    function updateStarsYellow(ratingDiv, value) {
+        const stars = ratingDiv.querySelectorAll('.star-icon');
+        stars.forEach(star => {
+            const starValue = star.getAttribute('data-value');
+            if (starValue <= value) {
+                star.style.color = '#FFC107';
+                star.textContent = '★';
+            } else {
+                star.style.color = '#DDD';
+                star.textContent = '★';
+            }
+        });
+    }
+    
+    function resetStars(ratingDiv) {
+        const stars = ratingDiv.querySelectorAll('.star-icon');
+        stars.forEach(star => {
+            star.style.color = '#DDD';
+            star.textContent = '★';
+        });
+    }
+</script>
 
 </body>
 

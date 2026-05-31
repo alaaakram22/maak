@@ -73,8 +73,8 @@
 
                     <div class="col-lg-7">
                         <div class="contact-form-card" data-aos="fade-up" data-aos-delay="200">
-                            <h2>Send us a Message</h2>
-                            <p class="mb-4">Have questions or want to learn more? Reach out to us and our team will get
+                            <h2>Send us a Message or a Complaint</h2>
+                            <p class="mb-4">Have questions or a complaint want to learn more? Reach out to us and our team will get
                                 back to you
                                 shortly.</p>
 

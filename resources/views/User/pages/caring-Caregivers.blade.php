@@ -53,10 +53,19 @@
                                         <span>{{ $caregiver->experience ?? 0 }} Years Experience</span>
                                     </div>
 
-                                    <!-- <div class="department">
-                                        <i class="bi bi-star"></i>
-                                        <span>Rating: {{ $caregiver->rating ?? 'N/A' }}</span>
-                                    </div> -->
+                                    <div class="department">
+                                        <i class="bi bi-star-fill text-warning"></i>
+                                        @php
+                                            $avgRating = $caregiver->average_rating;
+                                            $reviewCount = $caregiver->total_reviews;
+                                        @endphp
+                                        <span>
+                                            Rating: {{ $avgRating ?? 'N/A' }}
+                                            @if($avgRating)
+                                                <small class="text-muted">({{ $reviewCount }} reviews)</small>
+                                            @endif
+                                        </span>
+                                    </div>
                                 </div>
 
                                 <a href="{{ route('caregiver.show', $caregiver->id) }}" class="btn-appointment">

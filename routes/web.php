@@ -9,6 +9,7 @@ use App\Http\Controllers\UserBookingController;
 use App\Http\Controllers\CaregiverBookingController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MessageController;
+use App\Http\Controllers\ReviewController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -45,6 +46,12 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/booking/store', [BookingController::class, 'store'])->name('booking.store');
     Route::get('/booking/{booking}/payment', [BookingController::class, 'payment'])->name('booking.payment');
     Route::post('/booking/{booking}/pay', [BookingController::class, 'pay'])->name('booking.pay');
+
+    // Review Routes
+    Route::post('/reviews', [ReviewController::class, 'store'])->name('reviews.store');
+    Route::get('/reviews/booking/{booking_id}', [ReviewController::class, 'getBookingReview'])->name('reviews.booking');
+    Route::put('/reviews/{review_id}', [ReviewController::class, 'update'])->name('reviews.update');
+    Route::delete('/reviews/{review_id}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
 });
 
 Route::middleware(['auth', 'admin'])->group(function () {
@@ -55,9 +62,29 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
     Route::put('/admin-profile', [ProfileController::class, 'updateAdminProfile'])
         ->name('admin.profile.update');
+    
+    Route::get('caregivers',[CaregiversController::class, 'allCaregivers'])
+    ->name('allCaregivers');
+
+    Route::get('customers',[CustomersController::class, 'allCustomers'])
+     ->name('allCustomers');
 
     Route::get('/allbookings', [BookingController::class, 'allBookings'])
     ->name('allbookings');
+
+    Route::patch('/admin/bookings/{booking}/status', [BookingController::class, 'updateStatus'])
+        ->name('admin.bookings.status');
+
+    Route::delete('/admin-bookings/{booking}', [BookingController::class, 'destroy'])
+        ->name('admin.bookings.destroy');
+
+    Route::get('/allmessages', [MessageController::class, 'index'])
+    ->name('allmessages');
+
+    Route::patch(
+    '/admin-messages/{message}/status',
+    [MessageController::class, 'updateStatus']
+)->name('admin.messages.status');
 });
 
 Route::middleware(['auth'])->group(function () {
@@ -98,7 +125,6 @@ Route::get('services', function () {
 });
 
 Route::controller(CaregiversController::class)->group(function () {
-    Route::get('caregivers', 'allCaregivers')->name('allCaregivers');
 
     Route::patch('/caregivers/{id}/status', 'updateStatus')
         ->name('caregivers.status');
@@ -127,7 +153,6 @@ Route::controller(CaregiversController::class)->group(function () {
 
 Route::controller(CustomersController::class)->group(function () {
 
-    Route::get('customers', 'allCustomers')->name('allCustomers');
 
     Route::get('/customers/create', 'create')->name('customers.create');
     Route::post('/customers', 'store')->name('customers.store');

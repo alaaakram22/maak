@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Booking;
 use App\Models\caregivers;
+use App\Models\Payment;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -62,6 +63,12 @@ class BookingController extends Controller
             'payment_status' => 'pending',
         ]);
 
+        Payment::create([
+            'booking_id' => $booking->id,
+            'amount' => $booking->price,
+            'payment_status' => 'pending',
+        ]); 
+
         return redirect()->route('booking.payment', $booking);
     }
 
@@ -99,10 +106,15 @@ class BookingController extends Controller
     ]);
 
     // mark as paid + confirmed
+    $booking->payment()->update([
+    'payment_status' => 'paid',
+    'paid_at' => now(),
+]);
+
     $booking->update([
-        'payment_status' => 'paid',
-        'status' => 'confirmed',
-    ]);
+    'payment_status' => 'paid',
+    'status' => 'confirmed',
+]);
 
     return redirect()
         ->route('booking.payment', $booking)
@@ -126,10 +138,29 @@ class BookingController extends Controller
     public function allBookings()
 {
     $bookings = Booking::with([
-        'customer.customer',
-        'caregiver.user'
-    ])->latest()->get();
+    'customer',
+    'caregiver.user',
+    'payment'
+])->latest()->get();
 
     return view('admin.allbookings', compact('bookings'));
 }
+
+    public function updateStatus(Request $request, Booking $booking)
+    {
+        $request->validate([
+            'status' => 'required|in:pending,confirmed,cancelled'
+        ]);
+
+        $booking->update(['status' => $request->status]);
+
+        return back()->with('success', 'Booking status updated.');
+    }
+
+    public function destroy(Booking $booking)
+    {
+        $booking->delete();
+
+        return back()->with('success', 'Booking deleted.');
+    }
 }

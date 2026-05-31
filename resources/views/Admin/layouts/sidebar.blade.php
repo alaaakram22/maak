@@ -62,6 +62,21 @@
                     <i ></i>
                     <span>All Bookings</span></a>
             </li>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider">
+
+            <!-- Heading -->
+            <div class="sidebar-heading">
+                Complaints & Messages
+            </div>
+            
+            <li class="nav-item active">
+                <a class="nav-link" href="{{ route('allmessages') }}">
+                    <i ></i>
+                    <span>All Messages</span></a>
+            </li>
+
             
 
             <!-- Divider -->
