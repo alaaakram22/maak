@@ -34,6 +34,7 @@
                             <th>Status</th>
                             <th>Payment</th>
                             <th>Created</th>
+                            <th>Actions</th>
                         </tr>
 
                     </thead>
@@ -151,7 +152,7 @@
                                 <!-- PAYMENT -->
                                 <td>
 
-                                    @if($booking->payment_status == 'paid')
+                                    @if($booking->payment?->payment_status == 'paid')
 
                                         <span class="badge bg-success text-white">
                                             Paid
@@ -171,6 +172,15 @@
                                 <td>
                                     {{ $booking->created_at->diffForHumans() }}
                                 </td>
+
+                                    <!-- ACTIONS -->
+                                    <td>
+                                        <form method="POST" action="{{ route('admin.bookings.destroy', $booking) }}" onsubmit="return confirm('Delete this booking?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button class="btn btn-sm btn-danger" type="submit">Delete</button>
+                                        </form>
+                                    </td>
 
                             </tr>
 

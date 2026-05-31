@@ -47,9 +47,10 @@
                             <th class="p-3">Gender</th>
                             <th class="p-3">Experience</th>
                             <th class="p-3">Skills</th>
+                            <th class="p-3">Rating</th>
+                            <th class="p-3">Reviews</th>
                             <th class="p-3">Medical Background</th>
                             <th class="p-3">Status</th>
-
                         </tr>
                     </thead>
 
@@ -97,6 +98,31 @@
                             <td class="p-3">
                                 {{ $caregiver->skills ?? '-' }}
                             </td>
+
+                            <td class="p-3">
+                                @php
+                                    $avg = $caregiver->average_rating;
+                                    $count = $caregiver->reviews_count ?? $caregiver->total_reviews;
+                                @endphp
+                                @if($avg)
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-warning font-semibold">★</span>
+                                        <span>{{ $avg }}</span>
+                                        <small class="text-muted">({{ $count }} )</small>
+                                    </div>
+                                @else
+                                    <span class="text-muted">N/A</span>
+                                @endif
+                            </td>
+
+                            <td class="p-3">
+                                @if(($caregiver->reviews ?? null) && $caregiver->reviews->count())
+                                    <button class="px-3 py-1 rounded bg-blue-600 text-white text-sm" data-bs-toggle="modal" data-bs-target="#reviewsModal{{ $caregiver->id }}">View</button>
+                                @else
+                                    <span class="text-muted">No reviews</span>
+                                @endif
+                            </td>
+
                             <td>
                                 @if($caregiver->medical_background)
                                 <span class="text-green-600 font-semibold">Medical</span>
@@ -151,6 +177,45 @@
                             </td>
 
                         </tr>
+
+                        <!-- Reviews Modal -->
+                        @if(($caregiver->reviews ?? null) && $caregiver->reviews->count())
+                            <div class="modal fade" id="reviewsModal{{ $caregiver->id }}" tabindex="-1" aria-labelledby="reviewsModalLabel{{ $caregiver->id }}" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered modal-lg">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="reviewsModalLabel{{ $caregiver->id }}">Reviews for {{ $caregiver->user->name }}</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            @foreach($caregiver->reviews as $rev)
+                                                <div class="mb-3 border-bottom pb-3">
+                                                    <div class="d-flex justify-content-between align-items-start">
+                                                        <div>
+                                                            <strong>{{ $rev->customer->name ?? 'Customer' }}</strong>
+                                                            <div class="text-warning">
+                                                                @for($i=0;$i<$rev->rating;$i++)
+                                                                    ★
+                                                                @endfor
+                                                                @for($i=$rev->rating;$i<5;$i++)
+                                                                    <span class="text-muted">☆</span>
+                                                                @endfor
+                                                            </div>
+                                                        </div>
+                                                        <small class="text-muted">{{ $rev->created_at->format('M d, Y') }}</small>
+                                                    </div>
+                                                    <p class="mb-0 text-muted">{{ $rev->review ?? 'No text provided' }}</p>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+
                         @empty
                         <tr>
                             <td colspan="8" class="text-center p-4 text-gray-500">

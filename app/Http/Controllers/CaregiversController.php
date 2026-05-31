@@ -88,7 +88,11 @@ class CaregiversController extends Controller
      */
     public function show($id)
     {
-        $caregiver = caregivers::with('user')->findOrFail($id);
+        $caregiver = caregivers::with('user')
+            ->withAvg('reviews', 'rating')
+            ->withCount('reviews')
+            ->with(['reviews' => function($q) { $q->with('customer'); }])
+            ->findOrFail($id);
 
         return view('User\pages\caregiver_details', compact('caregiver'));
     }
@@ -157,7 +161,11 @@ class CaregiversController extends Controller
     }
     public function allCaregivers()
     {
-        $caregivers = caregivers::with('user')->get();
+        $caregivers = caregivers::with('user')
+            ->withAvg('reviews', 'rating')
+            ->withCount('reviews')
+            ->with(['reviews' => function($q) { $q->with('customer'); }])
+            ->get();
 
         return view('Admin/allCaregivers', compact('caregivers'));
     }
@@ -180,6 +188,8 @@ class CaregiversController extends Controller
         $caregivers = caregivers::where('medical_background', true)
             ->where('status', 'active')
             ->with('user')
+            ->withAvg('reviews', 'rating')
+            ->withCount('reviews')
             ->get();
 
         return view('User.pages.medicalCaregivers', compact('caregivers'));
@@ -189,6 +199,8 @@ class CaregiversController extends Controller
         $caregivers = caregivers::where('medical_background', false)
             ->where('status', 'active')
             ->with('user')
+            ->withAvg('reviews', 'rating')
+            ->withCount('reviews')
             ->get();
 
         return view('User.pages.caring-Caregivers', compact('caregivers'));

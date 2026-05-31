@@ -41,15 +41,15 @@
                             <div class="row g-0">
 
                                 <!-- IMAGE -->
-                                <div class="col-lg-4">
+                                <div class="col-lg-4 d-flex align-items-center justify-content-center">
 
-                                    <div class="h-100 position-relative">
+                                    <div class="text-center">
 
-                                        <img src="{{ $caregiver->image_url }}" class="w-100 h-100"
-                                            style="object-fit: cover; min-height: 450px;">
+                                        <img src="{{ $caregiver->image_url }}"
+                                             style="width:320px;height:320px;object-fit:cover;border-radius:50%;border:6px solid #fff;box-shadow:0 6px 18px rgba(0,0,0,0.12);">
 
                                         <!-- BADGE -->
-                                        <div class="position-absolute top-0 start-0 m-3">
+                                        <div class="mt-3">
 
                                             @if($caregiver->medical_background)
                                             <span class="badge bg-primary px-3 py-2 rounded-pill shadow">
@@ -189,6 +189,31 @@
 
                                                     <div class="d-flex align-items-center">
 
+                                                        <div class="bg-info bg-opacity-10 rounded-circle p-3 me-3">
+                                                            <i class="bi bi-star-fill text-warning fs-5"></i>
+                                                        </div>
+
+                                                        <div>
+                                                            <small class="text-muted d-block">
+                                                                Average Rating
+                                                            </small>
+
+                                                            <span class="fw-semibold">
+                                                                {{ $caregiver->average_rating ?? 'N/A' }}
+                                                                @if($caregiver->average_rating)
+                                                                    <small class="text-muted">({{ $caregiver->total_reviews }} reviews)</small>
+                                                                @endif
+                                                            </span>
+                                                        </div>
+
+                                                    </div>
+
+                                                </div>
+
+                                                <div class="col-md-6">
+
+                                                    <div class="d-flex align-items-center">
+
                                                         <div class="bg-danger bg-opacity-10 rounded-circle p-3 me-3">
                                                             <i class="bi bi-calendar-heart text-danger fs-5"></i>
                                                         </div>
@@ -230,6 +255,8 @@
 
                                     </div>
 
+                                    <!-- Reviews moved below the details card -->
+
                                 </div>
 
                             </div>
@@ -243,6 +270,46 @@
             </div>
 
             <!-- BOOKING CARD -->
+            <!-- REVIEWS SECTION (separate block under details card) -->
+            <div class="row justify-content-center mt-4">
+
+                <div class="col-lg-10">
+
+                    <div class="card border-0 shadow-lg rounded-4 p-4">
+
+                        <h5 class="fw-bold mb-3">Reviews</h5>
+
+                        <div>
+                            @if(($caregiver->reviews ?? null) && $caregiver->reviews->count())
+                                @foreach($caregiver->reviews as $rev)
+                                    <div class="mb-3 p-3 bg-white rounded-3 shadow-sm">
+                                        <div class="d-flex justify-content-between align-items-start mb-2">
+                                            <div>
+                                                <strong>{{ $rev->customer->name ?? 'Customer' }}</strong>
+                                                <div class="text-warning">
+                                                    @for($i = 0; $i < $rev->rating; $i++)
+                                                        ★
+                                                    @endfor
+                                                    @for($i = $rev->rating; $i < 5; $i++)
+                                                        <span class="text-muted">☆</span>
+                                                    @endfor
+                                                </div>
+                                            </div>
+                                            <small class="text-muted">{{ $rev->created_at->format('M d, Y') }}</small>
+                                        </div>
+                                        <p class="mb-0 text-muted">{{ $rev->review ?? 'No review text provided.' }}</p>
+                                    </div>
+                                @endforeach
+                            @else
+                                <p class="text-muted">No reviews yet.</p>
+                            @endif
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
             <div class="row justify-content-center">
 
                 <div class="col-lg-10">

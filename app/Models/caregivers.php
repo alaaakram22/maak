@@ -35,7 +35,34 @@ class caregivers extends Model
 }
 
     public function bookings()
-{
-    return $this->hasMany(Booking::class);
-}
+    {
+        return $this->hasMany(Booking::class, 'caregiver_id');
+    }
+
+    public function reviews()
+    {
+        return $this->hasMany(Review::class, 'caregiver_id');
+    }
+
+    public function averageRating()
+    {
+        return $this->reviews()->avg('rating');
+    }
+
+    public function totalReviews()
+    {
+        return $this->reviews()->count();
+    }
+
+    public function getAverageRatingAttribute()
+    {
+        $avg = $this->reviews_avg_rating ?? $this->reviews()->avg('rating');
+
+        return $avg ? round($avg, 1) : null;
+    }
+
+    public function getTotalReviewsAttribute()
+    {
+        return $this->reviews_count ?? $this->reviews()->count();
+    }
 }
