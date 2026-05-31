@@ -1,4 +1,4 @@
-@include('user.partials.header')
+`@include('user.partials.header')
 
 <body class="doctors-page">
     <main class="main">
