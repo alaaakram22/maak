@@ -310,6 +310,7 @@
                 </div>
 
             </div>
+            @if(auth()->check() && auth()->user()->role === 'customer')
             <div class="row justify-content-center">
 
                 <div class="col-lg-10">
@@ -409,7 +410,7 @@
                                                 </div>
 
                                                 <div class="text-decoration-line-through text-muted small">
-                                                    6,500 EGP
+                                                    5,600 EGP
                                                 </div>
 
                                             </div>
@@ -536,6 +537,7 @@
                 </div>
 
             </div>
+            @endif
 
             </div>
 

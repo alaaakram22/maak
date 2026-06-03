@@ -47,6 +47,8 @@
                             <th class="p-3">Gender</th>
                             <th class="p-3">Experience</th>
                             <th class="p-3">Skills</th>
+                            <th class="p-3">CV</th>
+                            <th class="p-3">National ID</th>
                             <th class="p-3">Rating</th>
                             <th class="p-3">Reviews</th>
                             <th class="p-3">Medical Background</th>
@@ -97,6 +99,22 @@
 
                             <td class="p-3">
                                 {{ $caregiver->skills ?? '-' }}
+                            </td>
+
+                            <td class="p-3">
+                                @if($caregiver->cv)
+                                    <a href="{{ asset('storage/'.$caregiver->cv) }}" target="_blank" class="text-blue-600 hover:underline">View CV</a>
+                                @else
+                                    <span class="text-gray-500">Missing</span>
+                                @endif
+                            </td>
+
+                            <td class="p-3">
+                                @if($caregiver->national_id)
+                                    <a href="{{ asset('storage/'.$caregiver->national_id) }}" target="_blank" class="text-blue-600 hover:underline">View ID</a>
+                                @else
+                                    <span class="text-gray-500">Missing</span>
+                                @endif
                             </td>
 
                             <td class="p-3">

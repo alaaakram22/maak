@@ -14,6 +14,9 @@ class caregivers extends Model
         'experience',
         'skills',
         'medical_background',
+        'image',
+        'cv',
+        'national_id',
     ];
     protected $guarded = [];
     protected $casts = [

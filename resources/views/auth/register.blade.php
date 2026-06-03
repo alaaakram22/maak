@@ -50,15 +50,12 @@
 
                 <input type="hidden" name="role" :value="role">
 
-                <template x-if="role === 'caregiver'">
-                    <!-- <div class="mt-4 border-t pt-4"> -->
-
-                        <div class="mb-4 p-4 bg-yellow-50 border-l-4 border-yellow-400 text-yellow-800 rounded">
-                            <p class="font-semibold">Caregiver registration requires admin approval.</p>
-                            <p class="text-sm">You will not be able to recive bookings until the admin approve your profile.</p>
-                        </div>
+                <div x-show="role === 'caregiver'" class="mt-4 border-t pt-4">
+                    <div class="mb-4 p-4 bg-yellow-50 border-l-4 border-yellow-400 text-yellow-800 rounded">
+                        <p class="font-semibold">Caregiver registration requires admin approval.</p>
+                        <p class="text-sm">You will not be able to receive bookings until the admin approves your profile.</p>
+                    </div>
                 </div>
-                </template>
 
                 <!-- NAME -->
                 <div class="mb-4">
@@ -119,52 +116,62 @@
                 </div>
 
                 <!-- CUSTOMER -->
-                <template x-if="role === 'customer'">
-                    <div class="mt-4 border-t pt-4">
+                <div x-show="role === 'customer'" class="mt-4 border-t pt-4">
 
-                        <div class="mb-3">
-                            <x-label value="Medical History" />
-                            <textarea name="medical_history"
-                                class="w-full border rounded mt-1 p-2"></textarea>
-                        </div>
-
-                        <div>
-                            <x-label value="Address" />
-                            <x-input name="address" class="block w-full mt-1" />
-                        </div>
-
+                    <div class="mb-3">
+                        <x-label value="Medical History" />
+                        <textarea name="medical_history"
+                            class="w-full border rounded mt-1 p-2"></textarea>
                     </div>
-                </template>
+
+                    <div class="mb-3">
+                        <x-label value="Address" />
+                        <x-input name="address" class="block w-full mt-1" />
+                    </div>
+
+                </div>
 
                 <!-- CAREGIVER -->
-                <template x-if="role === 'caregiver'">
-                    <div class="mt-4 border-t pt-4">
+                <div x-show="role === 'caregiver'" class="mt-4 border-t pt-4">
 
-                        <div class="mb-3">
-                            <x-label value="Experience (years)" />
-                            <x-input name="experience" type="number" class="block w-full mt-1" />
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="flex items-center gap-2">
-                                <input type="checkbox" name="medical_background" value="1">
-                                Medical Background
-                            </label>
-                        </div>
-
-                        <div class="mb-3">
-                            <x-label value="Skills" />
-                            <x-input name="skills" class="block w-full mt-1" />
-                        </div>
-
-                        <div>
-                            <x-label value="Profile Image" />
-                            <input type="file" name="image"
-                                class="w-full border rounded mt-1 p-2">
-                        </div>
-
+                    <div class="mb-3">
+                        <x-label value="Experience (years)" />
+                        <x-input name="experience" type="number" class="block w-full mt-1" />
                     </div>
-                </template>
+
+                    <div class="mb-3">
+                        <label class="flex items-center gap-2">
+                            <input type="checkbox" name="medical_background" value="1">
+                            Medical Background
+                        </label>
+                    </div>
+
+                    <div class="mb-3">
+                        <x-label value="Skills" />
+                        <x-input name="skills" class="block w-full mt-1" />
+                    </div>
+
+                    <div class="mb-3">
+                        <x-label value="Upload CV" />
+                        <input type="file" name="cv" accept="application/pdf,image/*"
+                            class="w-full border rounded mt-1 p-2" :required="role === 'caregiver'">
+                        <p class="text-xs text-gray-500 mt-1">PDF, JPG, JPEG or PNG.</p>
+                    </div>
+
+                    <div class="mb-3">
+                        <x-label value="Upload National ID" />
+                        <input type="file" name="national_id" accept="application/pdf,image/*"
+                            class="w-full border rounded mt-1 p-2" :required="role === 'caregiver'">
+                        <p class="text-xs text-gray-500 mt-1">PDF, JPG, JPEG or PNG.</p>
+                    </div>
+
+                    <div class="mb-3">
+                        <x-label value="Profile Image" />
+                        <input type="file" name="image"
+                            class="w-full border rounded mt-1 p-2">
+                    </div>
+
+                </div>
 
             </div>
 
@@ -184,13 +191,13 @@
             @endif
 
             <!-- ACTIONS -->
-            <div class="flex items-center justify-between mt-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mt-6">
                 <a href="{{ route('login') }}" class="text-sm text-blue-600 hover:underline">
                     Already have an account?
                 </a>
 
                 <button type="submit"
-                    class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg shadow transition">
+                    class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg shadow transition">
                     Register
                 </button>
             </div>
@@ -199,6 +206,7 @@
 
     </div>
 </div>
-```
+
 
 </x-guest-layout>
+

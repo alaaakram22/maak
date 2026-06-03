@@ -38,7 +38,8 @@ class CreateNewUser implements CreatesNewUsers
             'skills' => ['required_if:role,caregiver', 'nullable', 'string'],
             'medical_background' => ['nullable', 'boolean'],
             'image' => ['nullable', 'image', 'mimes:jpg,png,jpeg', 'max:2048'],
-
+            'cv' => ['required_if:role,caregiver', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:5120'],
+            'national_id' => ['required_if:role,caregiver', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:5120'],
 
             // customer
             'medical_history' => ['required_if:role,customer', 'nullable', 'string'],
@@ -51,9 +52,20 @@ class CreateNewUser implements CreatesNewUsers
 
         // HANDLE IMAGE
         $imagePath = null;
-        if (isset($input['image'])) {
+        if (request()->hasFile('image')) {
             $imagePath = request()->file('image')->store('caregivers', 'public');
         }
+
+        $cvPath = null;
+        if (request()->hasFile('cv')) {
+            $cvPath = request()->file('cv')->store('caregivers', 'public');
+        }
+
+        $nationalIdPath = null;
+        if (request()->hasFile('national_id')) {
+            $nationalIdPath = request()->file('national_id')->store('caregivers', 'public');
+        }
+
         // ✅ create user
         $user = User::create([
             'name' => $input['name'],
@@ -74,7 +86,8 @@ class CreateNewUser implements CreatesNewUsers
                 'skills' => $input['skills'],
                 'medical_background' => isset($input['medical_background']),
                 'image' => $imagePath,
-
+                'cv' => $cvPath,
+                'national_id' => $nationalIdPath,
             ]);
         }
 
